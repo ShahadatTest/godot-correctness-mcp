@@ -39,6 +39,22 @@ describe("parseGodotFile", () => {
     const input = f.sections.find((s) => s.kind === "input");
     expect(input?.properties["jump"]?.raw.trimStart().startsWith("{")).toBe(true);
   });
+
+  it("reports the start line for a multi-line dict property", () => {
+    const source = `[node name="Root" type="Node"]\nmeta = {\n"a": 1,\n"b": 2\n}\n`;
+    const f = parseGodotFile(source);
+    const node = sectionsOfKind(f, "node")[0];
+    expect(node.properties["meta"]?.line).toBe(2);
+  });
+});
+
+describe("duplicate ext_resource id message", () => {
+  it("uses the stored id for unquoted ids", () => {
+    const root = fixtureRoot("dup-id-project");
+    const findings = validateScenes(root);
+    const dup = findings.find((f) => f.ruleId === "scene-duplicate-resource-id");
+    expect(dup?.message).toBe('Duplicate ext_resource id "1".');
+  });
 });
 
 describe("validateScenes", () => {

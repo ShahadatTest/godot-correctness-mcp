@@ -82,10 +82,10 @@ export function validateScenes(root: string, config?: ResolvedConfig): Finding[]
     const file = parseGodotFile(readFileSync(full, "utf-8"));
     const { byId, duplicates } = extResourceIndex(file);
 
-    for (const { section } of duplicates) {
+    for (const { id, section } of duplicates) {
       findings.push(
         finding(rel, section.line, "scene-duplicate-resource-id", "error",
-          `Duplicate ext_resource id "${section.attributes["id"]?.string ?? ""}".`,
+          `Duplicate ext_resource id "${id}".`,
           "Give each ext_resource a unique id."),
       );
     }
